@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: event_form_postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-username}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-event_db}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - event_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-username} -d ${POSTGRES_DB:-event_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: event_form_api
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-username}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-event_db}
+      - POSTGRES_USER=${POSTGRES_USER:-username}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+      - POSTGRES_SERVER=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=${POSTGRES_DB:-event_db}
+      - DEBUG=${DEBUG:-False}
+      - HOST=0.0.0.0
+      - PORT=8000
+    ports:
+      - "${API_PORT:-8000}:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - event_network
+    restart: unless-stopped
+    volumes:
+      - .:/app
+    command: >
+      bash -c "
+        echo 'Attente de la base de données...' &&
+        python -c 'from app.database import check_database_health; result = check_database_health(); print(\"DB Status:\", result[\"status\"], \"-\", result[\"message\"]); exit(0 if result[\"status\"] == \"healthy\" else 1)' &&
+        echo 'Application des migrations Alembic...' &&
+        alembic upgrade head &&
+        echo 'Démarrage de l''application...' &&
+        uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+      "
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: event_form_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@example.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    depends_on:
+      - postgres
+    networks:
+      - event_network
+    restart: unless-stopped
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+
+networks:
+  event_network:
+    driver: bridge

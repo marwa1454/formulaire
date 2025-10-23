@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Système de signalement – République de Djibouti</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brand-900: #002654;
+      --brand-800: #003B7A;
+      --brand-700: #004C99;
+      --accent-500: #059669;
+      --accent-red: #dc2626;
+      --accent-orange: #f59e0b;
+      --bg: #F4F6F8;
+      --panel: #FFFFFF;
+      --line: #E5E7EB;
+      --ink-900: #0F172A;
+      --ink-700: #334155;
+      --ink-500: #64748B;
+      --radius: 10px;
+      --radius-sm: 8px;
+      --shadow-1: 0 1px 2px rgba(16, 24, 40, .06), 0 1px 3px rgba(16, 24, 40, .08);
+      --focus: 0 0 0 3px rgba(0, 70, 130, .18);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, sans-serif;
+      background: var(--bg);
+      color: var(--ink-700);
+      margin: 0;
+    }
+
+    .site-header {
+      background: linear-gradient(90deg, var(--brand-900), var(--brand-800));
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+    }
+    .site-header h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .site-header small {
+      font-size: 13px;
+      opacity: .9;
+    }
+    .logout-btn {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .logout-btn:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .user-badge {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.2);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+    }
+
+    .wrap {
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 20px;
+      background: var(--panel);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-1);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    /* Navigation tabs pour admin */
+    .nav-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--line);
+    }
+    .nav-tab {
+      padding: 12px 24px;
+      background: none;
+      border: none;
+      color: var(--ink-500);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+    }
+    .nav-tab:hover {
+      color: var(--brand-700);
+    }
+    .nav-tab.active {
+      color: var(--brand-800);
+      border-bottom-color: var(--brand-800);
+    }
+
+    label { display:block; margin-bottom:6px; font-weight:600; }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--brand-700);
+      box-shadow: var(--focus);
+    }
+    .radio-group { display:flex; flex-wrap:wrap; gap:12px; margin-bottom: 15px; }
+    .radio-group label { font-weight: normal; }
+    .hidden { display:none !important; }
+    .btn { 
+      background: var(--brand-800); 
+      color:#fff; 
+      padding:12px 16px; 
+      border:none; 
+      border-radius:var(--radius-sm); 
+      cursor:pointer; 
+      width: 100%;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    .btn:hover { background: var(--brand-700); }
+    .btn:disabled { 
+      background: var(--ink-500); 
+      cursor: not-allowed; 
+    }
+
+    .alert {
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      margin: 15px 0;
+    }
+    .alert-error {
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+    }
+    .alert-success {
+      background: #f0fdf4;
+      color: #059669;
+      border: 1px solid #bbf7d0;
+    }
+
+    footer {
+      text-align:center;
+      font-size:12px;
+      color: var(--ink-500);
+      margin-top:40px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .status-indicator {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      z-index: 1000;
+    }
+    .status-online {
+      background: var(--accent-500);
+      color: white;
+    }
+    .status-offline {
+      background: #dc2626;
+      color: white;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .stat-card {
+      background: var(--panel);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow-1);
+      border-left: 4px solid var(--brand-700);
+    }
+    .stat-card.danger { border-left-color: var(--accent-red); }
+    .stat-card.warning { border-left-color: var(--accent-orange); }
+    .stat-card.success { border-left-color: var(--accent-500); }
+    
+    .stat-label {
+      font-size: 13px;
+      color: var(--ink-500);
+      font-weight: 500;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--ink-900);
+    }
+    .stat-subtitle {
+      font-size: 12px;
+      color: var(--ink-500);
+      margin-top: 5px;
+    }
+
+    /* Filters */
+    .filters {
+      background: var(--panel);
+      padding: 20px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-1);
+      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+    }
+    .filter-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: var(--ink-700);
+    }
+    .filter-group select, .filter-group input {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+    }
+    .filter-group button {
+      padding: 8px 16px;
+      background: var(--brand-800);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 24px;
+    }
+    .filter-group button:hover {
+      background: var(--brand-700);
+    }
+
+    /* Table */
+    .table-container {
+      background: var(--panel);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-1);
+      overflow: hidden;
+    }
+    .table-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .table-header h2 {
+      margin: 0;
+      font-size: 18px;
+      color: var(--ink-900);
+    }
+    .table-header .count {
+      font-size: 14px;
+      color: var(--ink-500);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead {
+      background: #F9FAFB;
+      border-bottom: 2px solid var(--line);
+    }
+    th {
+      text-align: left;
+      padding: 12px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-700);
+      text-transform: uppercase;
+    }
+    td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+    }
+    tbody tr:hover {
+      background: #F9FAFB;
+      cursor: pointer;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .badge-faible {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    .badge-moyenne {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    .badge-elevee {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--ink-500);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--ink-500);
+    }
+
+    .pagination {
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .pagination button {
+      padding: 8px 16px;
+      border: 1px solid var(--line);
+      background: white;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+    .pagination button:hover:not(:disabled) {
+      background: var(--bg);
+    }
+    .pagination button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal.active {
+      display: flex;
+    }
+    .modal-content {
+      background: white;
+      border-radius: var(--radius);
+      max-width: 600px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,.1), 0 10px 10px -5px rgba(0,0,0,.04);
+    }
+    .modal-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-header h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--ink-500);
+    }
+    .modal-body {
+      padding: 20px;
+    }
+    .detail-row {
+      margin-bottom: 15px;
+    }
+    .detail-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-500);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .detail-value {
+      font-size: 14px;
+      color: var(--ink-900);
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="user-badge" id="userBadge" style="display: none;"></div>
+    <h1>Système de signalement</h1>
+    <small>République de Djibouti</small>
+    <button class="logout-btn hidden" id="logoutBtn" onclick="deconnexion()">Déconnexion</button>
+  </header>
+
+  <div class="status-indicator" id="apiStatus">Vérification API...</div>
+
+  <main>
+    <!-- Page LOGIN -->
+    <section id="loginPage" class="wrap">
+      <h2>Connexion</h2>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="username">Nom d'utilisateur</label>
+          <input type="text" id="username" required />
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <input type="password" id="password" required />
+        </div>
+        
+        <div id="loginError" class="alert alert-error hidden">
+          Identifiants incorrects
+        </div>
+        
+        <button type="submit" class="btn">Se connecter</button>
+      </form>
+      
+      <footer>
+        <p>Comptes de test : user/user123 ou admin/admin123</p>
+      </footer>
+    </section>
+
+    <!-- Page USER : Formulaire simple -->
+    <section id="userPage" class="hidden">
+      <div class="wrap">
+        <h2>Nouveau signalement</h2>
+        <form id="reportForm">
+          <div class="form-group">
+            <label for="dateSignalement">Date du signalement *</label>
+            <input type="date" id="dateSignalement" required />
+          </div>
+
+          <div class="form-group">
+            <label for="heureSignalement">Heure du signalement *</label>
+            <input type="time" id="heureSignalement" required />
+          </div>
+
+          <div class="form-group">
+            <label for="nomAgent">Nom de l'agent *</label>
+            <input type="text" id="nomAgent" required />
+          </div>
+
+          <div class="form-group">
+            <label for="idAgent">ID de l'agent *</label>
+            <input type="text" id="idAgent" required />
+          </div>
+
+          <div class="form-group">
+            <label for="typeEvenement">Type d'événement *</label>
+            <select id="typeEvenement" required>
+              <option value="">Sélectionner…</option>
+              <option value="REUNION_QUARTIER">Réunion de quartier</option>
+              <option value="PUBLICATION_RESEAUX">Publication sur les réseaux</option>
+              <option value="RASSEMBLEMENT_PUBLIC">Rassemblement public</option>
+              <option value="AUTRE">Autre</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Gravité *</label>
+            <div class="radio-group">
+              <label><input type="radio" name="gravite" value="FAIBLE" required> Faible</label>
+              <label><input type="radio" name="gravite" value="MOYENNE"> Moyenne</label>
+              <label><input type="radio" name="gravite" value="ELEVEE"> Élevée</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="lieu">Lieu *</label>
+            <input type="text" id="lieu" required />
+          </div>
+
+          <div class="form-group">
+            <label>Source de l'information *</label>
+            <div class="radio-group">
+              <label><input type="radio" name="source" value="OBSERVATION_DIRECTE" required> Observation directe</label>
+              <label><input type="radio" name="source" value="INFORMATEUR"> Informateur</label>
+              <label><input type="radio" name="source" value="RESEAUX_SOCIAUX"> Réseaux sociaux</label>
+              <label><input type="radio" name="source" value="AUTRE"> Autre</label>
+            </div>
+            <div id="sourceAutreField" class="hidden">
+              <label for="sourceAutre">Précisez la source *</label>
+              <input type="text" id="sourceAutre" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Action entreprise *</label>
+            <div class="radio-group">
+              <label><input type="radio" name="action" value="OBSERVATION" required> Observation</label>
+              <label><input type="radio" name="action" value="ALERTE_TRANSMISE"> Alerte transmise</label>
+              <label><input type="radio" name="action" value="INTERVENTION"> Intervention</label>
+              <label><input type="radio" name="action" value="AUTRE"> Autre</label>
+            </div>
+            <div id="actionAutreField" class="hidden">
+              <label for="actionAutre">Précisez l'action *</label>
+              <input type="text" id="actionAutre" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="commentaire">Commentaire complémentaire</label>
+            <textarea id="commentaire" rows="4"></textarea>
+          </div>
+
+          <div id="submitError" class="alert alert-error hidden"></div>
+          <div id="submitSuccess" class="alert alert-success hidden"></div>
+
+          <button type="submit" class="btn">Soumettre le signalement</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Page ADMIN : Formulaire + Dashboard -->
+    <section id="adminPage" class="hidden">
+      <!-- Navigation tabs -->
+      <div class="container">
+        <div class="nav-tabs">
+          <button class="nav-tab active" onclick="switchTab('formulaire')">Nouveau signalement</button>
+          <button class="nav-tab" onclick="switchTab('dashboard')">Tableau de bord</button>
+        </div>
+      </div>
+
+      <!-- Tab 1: Formulaire -->
+      <div id="tabFormulaire" class="wrap">
+        <h2>Nouveau signalement</h2>
+        <form id="adminReportForm">
+          <div class="form-group">
+            <label for="adminDateSignalement">Date du signalement *</label>
+            <input type="date" id="adminDateSignalement" required />
+          </div>
+
+          <div class="form-group">
+            <label for="adminHeureSignalement">Heure du signalement *</label>
+            <input type="time" id="adminHeureSignalement" required />
+          </div>
+
+          <div class="form-group">
+            <label for="adminNomAgent">Nom de l'agent *</label>
+            <input type="text" id="adminNomAgent" required />
+          </div>
+
+          <div class="form-group">
+            <label for="adminIdAgent">ID de l'agent *</label>
+            <input type="text" id="adminIdAgent" required />
+          </div>
+
+          <div class="form-group">
+            <label for="adminTypeEvenement">Type d'événement *</label>
+            <select id="adminTypeEvenement" required>
+              <option value="">Sélectionner…</option>
+              <option value="REUNION_QUARTIER">Réunion de quartier</option>
+              <option value="PUBLICATION_RESEAUX">Publication sur les réseaux</option>
+              <option value="RASSEMBLEMENT_PUBLIC">Rassemblement public</option>
+              <option value="AUTRE">Autre</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Gravité *</label>
+            <div class="radio-group">
+              <label><input type="radio" name="adminGravite" value="FAIBLE" required> Faible</label>
+              <label><input type="radio" name="adminGravite" value="MOYENNE"> Moyenne</label>
+              <label><input type="radio" name="adminGravite" value="ELEVEE"> Élevée</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="adminLieu">Lieu *</label>
+            <input type="text" id="adminLieu" required />
+          </div>
+
+          <div class="form-group">
+            <label>Source de l'information *</label>
+            <div class="radio-group">
+              <label><input type="radio" name="adminSource" value="OBSERVATION_DIRECTE" required> Observation directe</label>
+              <label><input type="radio" name="adminSource" value="INFORMATEUR"> Informateur</label>
+              <label><input type="radio" name="adminSource" value="RESEAUX_SOCIAUX"> Réseaux sociaux</label>
+              <label><input type="radio" name="adminSource" value="AUTRE"> Autre</label>
+            </div>
+            <div id="adminSourceAutreField" class="hidden">
+              <label for="adminSourceAutre">Précisez la source *</label>
+              <input type="text" id="adminSourceAutre" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Action entreprise *</label>
+            <div class="radio-group">
+              <label><input type="radio" name="adminAction" value="OBSERVATION" required> Observation</label>
+              <label><input type="radio" name="adminAction" value="ALERTE_TRANSMISE"> Alerte transmise</label>
+              <label><input type="radio" name="adminAction" value="INTERVENTION"> Intervention</label>
+              <label><input type="radio" name="adminAction" value="AUTRE"> Autre</label>
+            </div>
+            <div id="adminActionAutreField" class="hidden">
+              <label for="adminActionAutre">Précisez l'action *</label>
+              <input type="text" id="adminActionAutre" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="adminCommentaire">Commentaire complémentaire</label>
+            <textarea id="adminCommentaire" rows="4"></textarea>
+          </div>
+
+          <div id="adminSubmitError" class="alert alert-error hidden"></div>
+          <div id="adminSubmitSuccess" class="alert alert-success hidden"></div>
+
+          <button type="submit" class="btn">Soumettre le signalement</button>
+        </form>
+      </div>
+
+      <!-- Tab 2: Dashboard -->
+      <div id="tabDashboard" class="hidden container">
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total signalements</div>
+            <div class="stat-value" id="statTotal">-</div>
+            <div class="stat-subtitle">Tous types confondus</div>
+          </div>
+
+          <div class="stat-card danger">
+            <div class="stat-label">Gravité élevée</div>
+            <div class="stat-value" id="statElevee">-</div>
+            <div class="stat-subtitle">Nécessite attention</div>
+          </div>
+
+          <div class="stat-card warning">
+            <div class="stat-label">Cette semaine</div>
+            <div class="stat-value" id="statSemaine">-</div>
+            <div class="stat-subtitle">7 derniers jours</div>
+          </div>
+
+          <div class="stat-card success">
+            <div class="stat-label">Aujourd'hui</div>
+            <div class="stat-value" id="statAujourdhui">-</div>
+            <div class="stat-subtitle">Dernières 24h</div>
+          </div>
+        </div>
+
+        <!-- Filtres -->
+        <div class="filters">
+          <div class="filter-group">
+            <label>Type d'événement</label>
+            <select id="filterType">
+              <option value="">Tous</option>
+              <option value="REUNION_QUARTIER">Réunion de quartier</option>
+              <option value="PUBLICATION_RESEAUX">Publication réseaux</option>
+              <option value="RASSEMBLEMENT_PUBLIC">Rassemblement public</option>
+              <option value="AUTRE">Autre</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label>Gravité</label>
+            <select id="filterGravite">
+              <option value="">Toutes</option>
+              <option value="FAIBLE">Faible</option>
+              <option value="MOYENNE">Moyenne</option>
+              <option value="ELEVEE">Élevée</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label>Date début</label>
+            <input type="date" id="filterDateDebut" />
+          </div>
+
+          <div class="filter-group">
+            <label>Date fin</label>
+            <input type="date" id="filterDateFin" />
+          </div>
+
+          <div class="filter-group">
+            <button onclick="appliquerFiltres()">Filtrer</button>
+          </div>
+
+          <div class="filter-group">
+            <button onclick="reinitialiserFiltres()" style="background: var(--ink-500);">Réinitialiser</button>
+          </div>
+        </div>
+
+        <!-- Tableau -->
+        <div class="table-container">
+          <div class="table-header">
+            <h2>Liste des signalements</h2>
+            <span class="count" id="tableCount">0 résultats</span>
+          </div>
+
+          <div id="loadingState" class="loading">
+            Chargement des données...
+          </div>
+
+          <div id="emptyState" class="empty-state" style="display: none;">
+            <p>Aucun signalement trouvé</p>
+          </div>
+
+          <table id="signalementsTable" style="display: none;">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Heure</th>
+                <th>Type</th>
+                <th>Gravité</th>
+                <th>Lieu</th>
+                <th>Agent</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+          </table>
+
+          <div class="pagination" id="pagination" style="display: none;">
+            <button onclick="changerPage(-1)">Précédent</button>
+            <span id="pageInfo">Page 1</span>
+            <button onclick="changerPage(1)">Suivant</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal détails -->
+  <div class="modal" id="detailModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Détails du signalement #<span id="modalId"></span></h3>
+        <button class="modal-close" onclick="fermerModal()">×</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- Contenu dynamique -->
+      </div>
+    </div>
+  </div>
+
+  <footer>SYSTÈME DE SIGNALEMENT - RÉPUBLIQUE DE DJIBOUTI</footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
