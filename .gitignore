@@ -1,0 +1,52 @@
+# Fichiers d'environnement (IMPORTANT!)
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Base de données
+*.db
+*.sqlite3
+*.sql
+
+# Alembic
+alembic/versions/__pycache__/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Docker
+docker-compose.override.yml
+
+# Logs
+*.log
+logs/
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pgAdmin
+pgadmin_data/
