@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
   <title>Système de signalement – République de Djibouti</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -251,25 +251,24 @@
       display: block;
       font-size: 13px;
       font-weight: 600;
-      margin-bottom: 5px;
-      color: var(--ink-700);
+      margin-bottom: 6px;
     }
-    .filter-group select, .filter-group input {
+    .filter-group input, .filter-group select {
       width: 100%;
-      padding: 8px 10px;
+      padding: 8px;
       border: 1px solid var(--line);
       border-radius: var(--radius-sm);
-      font-size: 14px;
     }
     .filter-group button {
-      padding: 8px 16px;
+      width: 100%;
+      padding: 10px;
       background: var(--brand-800);
       color: white;
       border: none;
       border-radius: var(--radius-sm);
       cursor: pointer;
+      font-weight: 600;
       font-size: 14px;
-      margin-top: 24px;
     }
     .filter-group button:hover {
       background: var(--brand-700);
@@ -279,102 +278,79 @@
     .table-container {
       background: var(--panel);
       border-radius: var(--radius);
+      padding: 20px;
       box-shadow: var(--shadow-1);
-      overflow: hidden;
     }
     .table-header {
-      padding: 20px;
-      border-bottom: 1px solid var(--line);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-bottom: 20px;
     }
     .table-header h2 {
       margin: 0;
       font-size: 18px;
       color: var(--ink-900);
     }
-    .table-header .count {
-      font-size: 14px;
+    .count {
       color: var(--ink-500);
+      font-size: 13px;
     }
-
     table {
       width: 100%;
       border-collapse: collapse;
     }
-    thead {
-      background: #F9FAFB;
-      border-bottom: 2px solid var(--line);
+    table thead {
+      background: var(--brand-800);
+      color: white;
     }
-    th {
+    table th {
+      padding: 12px;
       text-align: left;
-      padding: 12px 20px;
       font-size: 13px;
       font-weight: 600;
-      color: var(--ink-700);
-      text-transform: uppercase;
     }
-    td {
-      padding: 16px 20px;
+    table td {
+      padding: 12px;
       border-bottom: 1px solid var(--line);
       font-size: 14px;
     }
-    tbody tr:hover {
-      background: #F9FAFB;
+    table tbody tr {
       cursor: pointer;
+      transition: background .2s;
+    }
+    table tbody tr:hover {
+      background: #f9fafb;
     }
 
-    .badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-    .badge-faible {
-      background: #d1fae5;
-      color: #065f46;
-    }
-    .badge-moyenne {
-      background: #fef3c7;
-      color: #92400e;
-    }
-    .badge-elevee {
-      background: #fee2e2;
-      color: #991b1b;
-    }
-
-    .loading {
+    .loading, .empty-state {
       text-align: center;
       padding: 40px;
       color: var(--ink-500);
     }
 
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--ink-500);
-    }
-
+    /* Pagination */
     .pagination {
-      padding: 20px;
       display: flex;
       justify-content: center;
-      gap: 10px;
+      align-items: center;
+      gap: 15px;
+      margin-top: 20px;
     }
     .pagination button {
+      background: var(--brand-800);
+      color: white;
+      border: none;
       padding: 8px 16px;
-      border: 1px solid var(--line);
-      background: white;
       border-radius: var(--radius-sm);
       cursor: pointer;
+      font-size: 14px;
     }
-    .pagination button:hover:not(:disabled) {
-      background: var(--bg);
+    .pagination button:hover {
+      background: var(--brand-700);
     }
     .pagination button:disabled {
-      opacity: 0.5;
+      background: var(--ink-500);
       cursor: not-allowed;
     }
 
@@ -384,72 +360,264 @@
       position: fixed;
       top: 0;
       left: 0;
-      right: 0;
-      bottom: 0;
+      width: 100%;
+      height: 100%;
       background: rgba(0,0,0,0.5);
-      z-index: 1000;
+      z-index: 2000;
       align-items: center;
       justify-content: center;
-      padding: 20px;
-    }
-    .modal.active {
-      display: flex;
     }
     .modal-content {
-      background: white;
+      background: var(--panel);
       border-radius: var(--radius);
       max-width: 600px;
-      width: 100%;
+      width: 90%;
       max-height: 90vh;
       overflow-y: auto;
-      box-shadow: 0 20px 25px -5px rgba(0,0,0,.1), 0 10px 10px -5px rgba(0,0,0,.04);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
     }
     .modal-header {
-      padding: 20px;
-      border-bottom: 1px solid var(--line);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding: 20px;
+      border-bottom: 1px solid var(--line);
     }
     .modal-header h3 {
       margin: 0;
       font-size: 18px;
+      color: var(--brand-900);
     }
     .modal-close {
       background: none;
       border: none;
-      font-size: 24px;
+      font-size: 28px;
       cursor: pointer;
       color: var(--ink-500);
+      line-height: 1;
+    }
+    .modal-close:hover {
+      color: var(--accent-red);
     }
     .modal-body {
       padding: 20px;
     }
-    .detail-row {
-      margin-bottom: 15px;
+
+    /* ========================================
+       RESPONSIVE MOBILE
+       ======================================== */
+
+    @media screen and (max-width: 768px) {
+      body {
+        font-size: 14px;
+      }
+
+      /* Header mobile */
+      .site-header {
+        padding: 15px 10px;
+      }
+      .site-header h1 {
+        font-size: 14px;
+        padding: 0 60px;
+      }
+      .site-header small {
+        font-size: 11px;
+      }
+      .user-badge {
+        left: 10px;
+        font-size: 11px;
+        padding: 4px 8px;
+      }
+      .logout-btn {
+        right: 10px;
+        font-size: 12px;
+        padding: 6px 12px;
+      }
+
+      /* Status indicator */
+      .status-indicator {
+        position: static;
+        margin: 10px;
+        text-align: center;
+      }
+
+      /* Containers */
+      .wrap, .container {
+        margin: 20px 10px;
+        padding: 15px;
+      }
+
+      /* Navigation tabs */
+      .nav-tabs {
+        flex-direction: row;
+        gap: 5px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .nav-tab {
+        padding: 10px 15px;
+        font-size: 13px;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      /* Forms */
+      .form-group {
+        margin-bottom: 12px;
+      }
+      .form-group label {
+        font-size: 13px;
+        margin-bottom: 5px;
+      }
+      input, select, textarea {
+        font-size: 16px; /* Évite le zoom automatique iOS */
+        padding: 12px;
+      }
+
+      /* Radio groups */
+      .radio-group {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .radio-group label {
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+      }
+      .radio-group input[type="radio"] {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+      }
+
+      /* Buttons */
+      .btn {
+        padding: 14px;
+        font-size: 15px;
+      }
+
+      /* Stats grid */
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+      .stat-card {
+        padding: 15px;
+      }
+      .stat-value {
+        font-size: 28px;
+      }
+
+      /* Filters */
+      .filters {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 15px;
+      }
+      .filter-group button {
+        padding: 12px;
+      }
+
+      /* Table */
+      .table-container {
+        padding: 15px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .table-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      table {
+        min-width: 700px;
+        font-size: 12px;
+      }
+      table th,
+      table td {
+        padding: 8px 6px;
+        font-size: 12px;
+      }
+
+      /* Pagination */
+      .pagination {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .pagination button {
+        flex: 1;
+        min-width: 100px;
+      }
+
+      /* Modal */
+      .modal-content {
+        width: 95%;
+        max-height: 85vh;
+      }
+      .modal-header {
+        padding: 15px;
+      }
+      .modal-header h3 {
+        font-size: 16px;
+      }
+      .modal-body {
+        padding: 15px;
+      }
+
+      /* Footer */
+      footer {
+        font-size: 11px;
+        padding: 20px 10px;
+      }
     }
-    .detail-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--ink-500);
-      text-transform: uppercase;
-      margin-bottom: 4px;
+
+    @media screen and (max-width: 480px) {
+      .site-header h1 {
+        font-size: 12px;
+      }
+      .stat-value {
+        font-size: 24px;
+      }
+      table {
+        min-width: 600px;
+        font-size: 11px;
+      }
+      table th,
+      table td {
+        padding: 6px 4px;
+      }
     }
-    .detail-value {
-      font-size: 14px;
-      color: var(--ink-900);
+
+    /* Amélioration tactile pour mobile */
+    @media (hover: none) and (pointer: coarse) {
+      button,
+      .btn,
+      .nav-tab,
+      table tbody tr,
+      .radio-group label {
+        min-height: 44px;
+      }
+      input,
+      select,
+      textarea {
+        min-height: 44px;
+      }
     }
   </style>
 </head>
 <body>
   <header class="site-header">
-    <div class="user-badge" id="userBadge" style="display: none;"></div>
+    <span id="userBadge" class="user-badge hidden"></span>
     <h1>Système de signalement</h1>
     <small>République de Djibouti</small>
-    <button class="logout-btn hidden" id="logoutBtn" onclick="deconnexion()">Déconnexion</button>
+    <button id="logoutBtn" class="logout-btn hidden" onclick="logout()">Déconnexion</button>
   </header>
 
-  <div class="status-indicator" id="apiStatus">Vérification API...</div>
+  <div id="apiStatus" class="status-indicator"></div>
 
   <main>
     <!-- Page LOGIN -->
@@ -460,19 +628,19 @@
           <label for="username">Nom d'utilisateur</label>
           <input type="text" id="username" required />
         </div>
-        
+
         <div class="form-group">
           <label for="password">Mot de passe</label>
           <input type="password" id="password" required />
         </div>
-        
+
         <div id="loginError" class="alert alert-error hidden">
           Identifiants incorrects
         </div>
-        
+
         <button type="submit" class="btn">Se connecter</button>
       </form>
-      
+
       <footer>
         <p></p>
       </footer>
